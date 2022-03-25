@@ -1,0 +1,28 @@
+{
+  "name": "bug-979/think-graphql",
+  "type": "library",
+  "require": {
+    "php": "^7.1 || ^8.0",
+    "webonyx/graphql-php": "v14.10.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "bug-979",
+      "email": "319160378@qq.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "thinkGql\\": "src/"
+    }
+  },
+  "extra": {
+    "think": {
+      "services": [
+        "thinkGql\\GraphQLService"
+      ]
+    }
+  }
+}
