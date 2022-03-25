@@ -6,6 +6,7 @@ namespace thinkGql\support;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
+use tomorrow\think\Support\Types;
 
 class Query extends ObjectType
 {
@@ -16,7 +17,32 @@ class Query extends ObjectType
         $config = [
             'name' => $this->attributes['name'] ?? null,
             'description' => $this->attributes['description'] ?? null,
-            'fields' => $this->fields(),
+            'fields' => function () {
+                $fields = $this->fields();
+                foreach ($fields as $field) {
+                    // 判断是否是分页类型
+                    $pagingKey = substr($field['type']->name, -6);
+                    if ($pagingKey === 'Paging') {
+                        if (array_key_exists('args', $field) && is_array($field['args'])) {
+                            $field['args'] = array_merge($field['args'], $paging);
+                        } else {
+                            $field['args'] = [
+                                'page' => [
+                                    'type' => Types::int(),
+                                    'desc' => '页码',
+                                    'defaultValue' => 1
+                                ],
+                                'limit' => [
+                                    'type' => Types::int(),
+                                    'desc' => '限制',
+                                    'defaultValue' => 10
+                                ]
+                            ];
+                        }
+                    }
+                }
+                return $fields;
+            },
             'resolveField' => function ($value, $args, $context, ResolveInfo $info) {
                 $methodName = 'resolve' . str_replace('_', '', $info->fieldName);
                 if (array_key_exists($info->fieldName, $value)) {

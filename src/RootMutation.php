@@ -13,18 +13,14 @@ class RootMutation extends ObjectType
     {
         $fields = [];
         $objectNames = Utils::getObjectNames('Mutation');
-        if (!empty($objectNames)) {
-            foreach ($objectNames as $val) {
-                GraphQLObject::getMutation($val)->name .= 'Mutation';
-                $fields[$val] = [
-                    'name' => $val,
-                    'type' => GraphQLObject::getMutation($val),
-                    'description' => GraphQLObject::getMutation($val)->description,
-                ];
-            }
+        foreach ($objectNames as $val) {
+            GraphQLObject::getMutation($val)->name .= 'Mutation';
+            $fields[$val] = [
+                'name' => $val,
+                'type' => GraphQLObject::getMutation($val),
+                'description' => GraphQLObject::getMutation($val)->description,
+            ];
         }
-
-
         $config = [
             'name' => 'Mutation',
             'fields' => $fields,

@@ -14,6 +14,7 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\Rules\CustomValidationRule;
 use GraphQL\Error\DebugFlag;
+use thinkGql\utils\Utils;
 
 class GraphQLController
 {
@@ -22,10 +23,14 @@ class GraphQLController
      */
     public function query()
     {
-        $schema = new Schema([
-            'query' => new RootQuery(),
-//            'mutation' => new RootMutation()
-        ]);
+        $schema = [];
+        if (!empty(Utils::getObjectNames('Query'))) {
+            $schema['query'] = new RootQuery();
+        }
+        if (!empty(Utils::getObjectNames('Mutation'))) {
+            $schema['mutation'] = new RootMutation();
+        }
+        $schema = new Schema($schema);
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);
         $query = $input['query'];

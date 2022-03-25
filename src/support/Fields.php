@@ -15,16 +15,18 @@ class Fields extends ObjectType
         $config = [
             'name' => $this->attributes['name'],
             'description' => $this->attributes['description'],
-            'fields' => $this->fields(),
+            'fields' => function () {
+                return $this->fields();
+            },
             'resolveField' => function ($value, $args, $context, ResolveInfo $info) {
                 $methodName = 'resolve' . str_replace('_', '', $info->fieldName);
-                if (array_key_exists($info->fieldName, $value)) {
-                    // 返回上级参数
-                    return $value[$info->fieldName] ?? null;
-                }
                 if (method_exists($this, $methodName)) {
                     // 执行resolve
                     return $this->{$methodName}($value, $args, $context, $info);
+                }
+                if (array_key_exists($info->fieldName, $value)) {
+                    // 返回上级参数
+                    return $value[$info->fieldName] ?? null;
                 }
             }
         ];
