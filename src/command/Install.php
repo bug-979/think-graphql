@@ -36,7 +36,7 @@ class Install extends Command
      * @param $path
      * @param bool $type true:文件 false:文件夹
      */
-    private function initFile($tplName, $path, $type = true)
+    private function initFile($tplName, $path, bool $type = true)
     {
         if ($type) {
             // 目录不存在创建目录
@@ -48,7 +48,7 @@ class Install extends Command
                 file_put_contents($path . $tplName, $tpl);
             }
         } else {
-            if (is_dir(dirname($path . $tplName)) && !file_exists($path . $tplName)) {
+            if (!file_exists($path . $tplName)) {
                 mkdir($path . $tplName, 0755, true);
             }
         }

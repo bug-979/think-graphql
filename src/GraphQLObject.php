@@ -9,14 +9,14 @@ use think\facade\Cache;
 
 class GraphQLObject
 {
-    protected static $fieldsList = [];
+    protected static array $fieldsList = [];
 
-    protected static $queryList = [];
+    protected static array $queryList = [];
 
-    protected static $mutationList = [];
+    protected static array $mutationList = [];
 
     protected static $types = [];
-    protected static $paging = [];
+    protected static array $paging = [];
 
     public function __construct()
     {

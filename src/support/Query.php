@@ -6,7 +6,7 @@ namespace thinkGql\support;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
-use tomorrow\think\Support\Types;
+use GraphQL\Type\Definition\Type;
 
 class Query extends ObjectType
 {
@@ -14,30 +14,31 @@ class Query extends ObjectType
 
     public function __construct()
     {
+        $paging = [
+            'page' => [
+                'type' => Type::int(),
+                'description' => '页码',
+                'defaultValue' => 1
+            ],
+            'limit' => [
+                'type' => Type::int(),
+                'description' => '限制',
+                'defaultValue' => 10
+            ]
+        ];
         $config = [
             'name' => $this->attributes['name'] ?? null,
             'description' => $this->attributes['description'] ?? null,
-            'fields' => function () {
+            'fields' => function () use ($paging) {
                 $fields = $this->fields();
-                foreach ($fields as $field) {
+                foreach ($fields as &$field) {
                     // 判断是否是分页类型
                     $pagingKey = substr($field['type']->name, -6);
                     if ($pagingKey === 'Paging') {
                         if (array_key_exists('args', $field) && is_array($field['args'])) {
                             $field['args'] = array_merge($field['args'], $paging);
                         } else {
-                            $field['args'] = [
-                                'page' => [
-                                    'type' => Types::int(),
-                                    'desc' => '页码',
-                                    'defaultValue' => 1
-                                ],
-                                'limit' => [
-                                    'type' => Types::int(),
-                                    'desc' => '限制',
-                                    'defaultValue' => 10
-                                ]
-                            ];
+                            $field['args'] = $paging;
                         }
                     }
                 }
