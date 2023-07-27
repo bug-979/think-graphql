@@ -9,5 +9,5 @@
 
 ## 安装
 
-初始化
+初始化  
 `php think thinkGql:install`
