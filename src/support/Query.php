@@ -10,7 +10,11 @@ use GraphQL\Type\Definition\Type;
 
 class Query extends ObjectType
 {
-    protected $attributes = [];
+    /**
+     * 描述
+     * @var string
+     */
+    public string $desc;
 
     public function __construct()
     {
@@ -27,8 +31,7 @@ class Query extends ObjectType
             ]
         ];
         $config = [
-            'name' => $this->attributes['name'] ?? null,
-            'description' => $this->attributes['description'] ?? null,
+            'description' => $this->desc ?? null,
             'fields' => function () use ($paging) {
                 $fields = $this->fields();
                 foreach ($fields as &$field) {
@@ -54,7 +57,8 @@ class Query extends ObjectType
                     // 执行resolve
                     return $this->{$methodName}($value, $args, $context, $info);
                 }
-            }
+            },
+            ''
         ];
         parent::__construct($config);
     }

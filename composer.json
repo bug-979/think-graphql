@@ -3,7 +3,8 @@
   "type": "library",
   "require": {
     "php": "^7.4 || ^8.0",
-    "webonyx/graphql-php": "v15.11.1"
+    "webonyx/graphql-php": "v15.11.1",
+    "ext-json": "*"
   },
   "license": "MIT",
   "authors": [

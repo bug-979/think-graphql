@@ -9,10 +9,22 @@ use think\facade\Cache;
 
 class GraphQLObject
 {
+    /**
+     * fields列表
+     * @var array
+     */
     protected static array $fieldsList = [];
 
+    /**
+     * 查询列表
+     * @var array
+     */
     protected static array $queryList = [];
 
+    /**
+     * 增删改列表
+     * @var array
+     */
     protected static array $mutationList = [];
 
     protected static $types = [];
@@ -25,38 +37,53 @@ class GraphQLObject
         }
     }
 
+    /**
+     * 获取字段
+     * @param string $obj
+     * @return mixed
+     */
     public function getFields(string $obj)
     {
-        if (array_key_exists($obj, self::$fieldsList)) {
-            return self::$fieldsList[$obj];
-        }
-        $fieldType = self::$types['Fields'][$obj];
-        return self::$fieldsList[$obj] = new $fieldType();
+        return $this->getObjectType('Fields',$obj);
     }
 
+    /**
+     * 获取查询集
+     * @param string $obj
+     * @return mixed
+     */
     public function getQuery(string $obj)
     {
-        if (array_key_exists($obj, self::$queryList)) {
-            return self::$queryList[$obj];
-        }
-        $fieldType = self::$types['Query'][$obj];
-        return self::$queryList[$obj] = new $fieldType();
+        return $this->getObjectType('Query',$obj);
     }
 
+    /**
+     * 获取Mutation
+     * @param string $obj
+     * @return mixed
+     */
     public function getMutation(string $obj)
+    {
+        return $this->getObjectType('Mutation',$obj);
+    }
+
+    protected function getObjectType(string $type,string $obj)
     {
         if (array_key_exists($obj, self::$mutationList)) {
             return self::$mutationList[$obj];
         }
-        $fieldType = self::$types['Mutation'][$obj];
+        $fieldType = self::$types[$type][$obj];
         return self::$mutationList[$obj] = new $fieldType();
     }
 
+    /**
+     * 分页
+     * @param $type
+     * @return ObjectType|mixed
+     */
     public function paging($type)
     {
-        if (array_key_exists($type->name, self::$paging)) {
-            return self::$paging[$type->name];
-        } else {
+        if (!array_key_exists($type->name, self::$paging)) {
             self::$paging[$type->name] = new ObjectType([
                 'name' => $type->name . 'Paging',
                 'description' => '分页',
@@ -79,7 +106,7 @@ class GraphQLObject
                     ],
                 ],
             ]);
-            return self::$paging[$type->name];
         }
+        return self::$paging[$type->name];
     }
 }

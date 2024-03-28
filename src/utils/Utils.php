@@ -15,13 +15,13 @@ class Utils
         $fieldNames = scandir(app_path() . "graphql/$type");
         if (!is_array($fieldNames)) {
             // 读取文件错误
+            return $objectNames;
         }
         foreach ($fieldNames as $key => $val) {
             $fieldName = basename($val, '.php');
-            if ($fieldName === '.' || $fieldName === '..') {
-                continue;
+            if (!is_dir($val)) {
+                $objectNames[] = $fieldName;
             }
-            $objectNames[] = lcfirst($fieldName);
         }
         return $objectNames;
     }

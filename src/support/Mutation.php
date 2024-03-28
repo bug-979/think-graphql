@@ -5,7 +5,7 @@ namespace thinkGql\support;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 
-class Fields extends ObjectType
+class Mutation extends ObjectType
 {
     /**
      * 描述
