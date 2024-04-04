@@ -27,6 +27,7 @@ class Install extends Command
         $this->initFile('graphql/Type', app_path(), false);
         $this->initFile('graphql/Query', app_path(), false);
         $this->initFile('graphql/Mutation', app_path(), false);
+        $this->initFile('graphql/Resolve', app_path(), false);
     }
 
     /**

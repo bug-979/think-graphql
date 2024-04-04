@@ -34,7 +34,7 @@ class Query extends ObjectType
             'description' => $this->desc ?? null,
             'fields' => function () use ($paging) {
                 $fields = $this->fields();
-                foreach ($fields as &$field) {
+                foreach ($fields as $name => &$field) {
                     // 判断是否是分页类型
                     $pagingKey = substr($field['type']->name, -6);
                     if ($pagingKey === 'Paging') {
@@ -42,6 +42,18 @@ class Query extends ObjectType
                             $field['args'] = array_merge($field['args'], $paging);
                         } else {
                             $field['args'] = $paging;
+                        }
+                    }
+                    if (isset($field['resolve']) && is_string($field['resolve']) && class_exists($field['resolve'])) {
+                        $resolved = new $field['resolve'];
+                        $methodName = $name;
+                        if (!empty($field['name']) && is_string($field['name'])) {
+                            $methodName = $field['name'];
+                        }
+                        if (method_exists($resolved, $methodName)) {
+                            $field['resolve'] = function ($value, $args, $context, $info) use ($resolved,$methodName) {
+                                return $resolved->$methodName($value, $args, $context, $info);
+                            };
                         }
                     }
                 }

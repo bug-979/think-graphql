@@ -19,7 +19,21 @@ class Mutation extends ObjectType
         $config = [
             'description' => $this->desc ?? null,
             'fields' => function () {
-                return $this->fields();
+                $fields = $this->fields();
+                foreach ($fields as $name => $field) {
+                    if (isset($field['resolve']) && is_string($field['resolve']) && class_exists($field['resolve'])) {
+                        $resolved = new $field['resolve'];
+                        $methodName = $name;
+                        if (!empty($field['name']) && is_string($field['name'])) {
+                            $methodName = $field['name'];
+                        }
+                        if (method_exists($resolved, $methodName)) {
+                            $field['resolve'] = function ($value, $args, $context, $info) use ($resolved,$methodName) {
+                                return $resolved->$methodName($value, $args, $context, $info);
+                            };
+                        }
+                    }
+                }
             },
             'resolveField' => function ($value, $args, $context, ResolveInfo $info) {
                 $methodName = 'resolve' . str_replace('_', '', $info->fieldName);
